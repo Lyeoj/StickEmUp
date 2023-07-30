@@ -1,0 +1,11 @@
+{
+  "type": "code",
+  "modid": "stickemup",
+  "name": "StickEmUp!",
+  "authors": ["Lyeoj"],
+  "description": "Trees will drop sticks (and saplings!) when you chop them!",
+  "version": "1.0.0",
+  "dependencies": {
+    "game": ""
+  }
+}
