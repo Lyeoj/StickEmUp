@@ -9,6 +9,8 @@ So please check out that mod and see which one you prefer!
 
 Enjoy!
 
+VintageStory Mod DB Page: https://mods.vintagestory.at/stickemup
+
 ## Config
 After seeing OneStick, I did borrow the idea of adding a couple simple configs to this mod as well.
 Right now, this includes:
