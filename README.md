@@ -4,10 +4,9 @@ A pretty straightforward mod: Trees will drop sticks (and saplings) when chopped
 
 Developed at the request of a Mr. Pakratt0013 for use on his Vintage Story multiplayer streams!
 
-To my dismay, after getting about 90% of the development done on this mod, I learned about the existence of: https://mods.vintagestory.at/onestick, which basically does the same thing!
-So check that mod out to see if it does what you want first!
+To my dismay, after getting about 90% of the development done on this mod, I learned about the existence of: https://mods.vintagestory.at/onestick, which basically does the same thing, albeit having a different implementation.
+So please check out that mod and see which one you prefer!
 
-However, I believe this mod is at least unique in that it also includes saplings among the tree drops.
 Enjoy!
 
 ## Config
