@@ -75,12 +75,7 @@ namespace stickemup.src
                             }                    
                         }
                     }
-                }
-                foreach (BlockDropItemStack stack in blockSel.Block.Drops)
-                {
-                    
-                }
-                
+                }     
             }
         }
 
