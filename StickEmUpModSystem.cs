@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace stickemup.src
+namespace StickEmUp
 {
-    public class StickEmUp : ModSystem
+    public class StickEmUpModSystem : ModSystem
     {
-
-        ICoreServerAPI api;
 
         public override bool ShouldLoad(EnumAppSide side)
         {
@@ -26,11 +24,13 @@ namespace stickemup.src
                 if ((diskConfig = api.LoadModConfig<ModConfig>(configFileName)) == null)
                 {
                     api.StoreModConfig<ModConfig>(ModConfig.Loaded, configFileName);
-                } else
+                }
+                else
                 {
                     ModConfig.Loaded = diskConfig;
                 }
-            } catch
+            }
+            catch
             {
                 api.StoreModConfig<ModConfig>(ModConfig.Loaded, configFileName);
             }
@@ -39,14 +39,14 @@ namespace stickemup.src
 
         public override void StartServerSide(ICoreServerAPI api)
         {
-            this.api = api;
             api.Event.BreakBlock += OnBreakBlock;
         }
 
         private void OnBreakBlock(IServerPlayer byPlayer, BlockSelection blockSel, ref float dropQuantityMultiplier, ref EnumHandling handling)
         {
-            if(byPlayer.InventoryManager.ActiveTool != null && byPlayer.InventoryManager.ActiveTool == EnumTool.Axe)
+            if (byPlayer.InventoryManager.ActiveTool != null && byPlayer.InventoryManager.ActiveTool == EnumTool.Axe)
             {
+                //byPlayer.SendMessage(GlobalConstants.GeneralChatGroup, ModConfig.Loaded.MaxDropRateModifier.ToString() + " " + ModConfig.Loaded.UseToolTier.ToString(), EnumChatType.Notification);
                 ItemAxe axe = (ItemAxe)byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Item;
                 if (blockSel.Block != null && blockSel.Block.BlockMaterial == EnumBlockMaterial.Wood)
                 {
@@ -57,27 +57,31 @@ namespace stickemup.src
                     {
                         BlockPos pos = stack.Pop();
                         Block block = byPlayer.Entity.World.BlockAccessor.GetBlock(pos);
-                        if(block.BlockMaterial == EnumBlockMaterial.Leaves)
-                        {                                     
+                        if (block.BlockMaterial == EnumBlockMaterial.Leaves)
+                        {
                             foreach (BlockDropItemStack drop in block.Drops)
                             {
                                 ItemStack nextDrop = drop.GetNextItemStack(1f);
-                                if(nextDrop != null)
+                                if (nextDrop != null)
                                 {
                                     float modifier = (ModConfig.Loaded.MaxDropRateModifier > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifier;
                                     double chance = ModConfig.Loaded.UseToolTier ? (axe.ToolTier * modifier / 5.0f) : modifier;
-                                    if(byPlayer.Entity.World.Rand.NextDouble() < chance)
+                                    if (byPlayer.Entity.World.Rand.NextDouble() < chance)
                                     {
                                         byPlayer.Entity.World.SpawnItemEntity(nextDrop, new Vec3d((double)pos.X + 0.5, (double)pos.Y + 0.5, (double)pos.Z + 0.5));
                                     }
                                 }
 
-                            }                    
+                            }
                         }
                     }
-                }     
+                }
             }
         }
 
+
+
     }
+
+
 }
