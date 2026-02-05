@@ -2,9 +2,9 @@
   "type": "code",
   "modid": "stickemup",
   "name": "StickEmUp!",
-  "authors": [ "Lyeoj" ],
-  "description": "Trees will drop sticks (and saplings!) when you chop them!",
-  "version": "1.2.0",
+  "authors": [ "Lyeoj", "SIGILL" ],
+  "description": "Trees will drop sticks (and saplings!) when you chop them! Additionally adds an option to drop any attached vines.",
+  "version": "1.3.1",
   "dependencies": {
     "game": ""
   }

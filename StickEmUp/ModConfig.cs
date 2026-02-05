@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace StickEmUp
 {
     public class ModConfig
@@ -17,5 +11,7 @@ namespace StickEmUp
         private float _MaxDropRateModifier = 0.8f;
         public float MaxDropRateModifier { get { return _MaxDropRateModifier; } set { _MaxDropRateModifier = value >= 0 ? value : 0; } }
 
+        private bool _DropVines = true;
+        public bool DropVines { get { return _DropVines; } set { _DropVines = value; } }
     }
 }
