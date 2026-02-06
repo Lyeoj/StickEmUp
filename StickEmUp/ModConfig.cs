@@ -13,5 +13,8 @@ namespace StickEmUp
 
         private bool _DropVines = true;
         public bool DropVines { get { return _DropVines; } set { _DropVines = value; } }
+
+        private bool _ApplyDropModifiersToVines = true;
+        public bool ApplyModifiersToVines { get { return _ApplyDropModifiersToVines; } set { _ApplyDropModifiersToVines = value; } }
     }
 }

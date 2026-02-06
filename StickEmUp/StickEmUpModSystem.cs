@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -45,6 +46,7 @@ namespace StickEmUp
             if (byPlayer.InventoryManager.ActiveTool == null || byPlayer.InventoryManager.ActiveTool != EnumTool.Axe || blockSel.Block == null || blockSel.Block.BlockMaterial != EnumBlockMaterial.Wood) { return; }
 
             ItemAxe axe = (ItemAxe)byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Item;
+            int axeTier = axe.ToolTier;
             int resistance;
             int woodTier;
             Stack<BlockPos> treePositions = axe.FindTree(byPlayer.Entity.World, blockSel.Position, out resistance, out woodTier);
@@ -56,7 +58,7 @@ namespace StickEmUp
 
                 if(ModConfig.Loaded.DropVines && (block.BlockMaterial == EnumBlockMaterial.Wood || block.BlockMaterial == EnumBlockMaterial.Leaves))
                 {
-                    DropAttachedVines(pos, byPlayer, handledVinesPositions);
+                    DropAttachedVines(pos, byPlayer, axeTier, handledVinesPositions);
                 }
 
                 if (block.BlockMaterial != EnumBlockMaterial.Leaves) { continue; }
@@ -67,8 +69,7 @@ namespace StickEmUp
                     
                     if (nextDrop == null) { continue; }
 
-                    float modifier = (ModConfig.Loaded.MaxDropRateModifier > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifier;
-                    double chance = ModConfig.Loaded.UseToolTier ? (axe.ToolTier * modifier / 5.0f) : modifier;
+                    double chance = CalculateDropChance(axeTier);
                     if (byPlayer.Entity.World.Rand.NextDouble() < chance)
                     {
                         byPlayer.Entity.World.SpawnItemEntity(nextDrop, new Vec3d((double)pos.X + 0.5, (double)pos.Y + 0.5, (double)pos.Z + 0.5));
@@ -77,50 +78,60 @@ namespace StickEmUp
             }
         }
 
-        private void DropAttachedVines(BlockPos treeBlockPos, IServerPlayer byPlayer, List<BlockPos> handledVinesPositions)
+        private void DropAttachedVines(BlockPos treeBlockPos, IServerPlayer byPlayer, int axeTier, List<BlockPos> handledVinesPositions)
         {
             IWorldAccessor world = byPlayer.Entity.World;
             IBlockAccessor blockAccessor = world.BlockAccessor;
-			foreach(BlockFacing facing in BlockFacing.HORIZONTALS)  // Look for vines on all four sides of the block.
-			{
-				BlockPos vinesPosition = treeBlockPos.AddCopy(facing);
-				BlockVines? vinesBlock = blockAccessor.GetBlock(vinesPosition) as BlockVines;
-				if(vinesBlock == null || vinesBlock.LastCodePart() != facing.Code) { continue; }
+            foreach(BlockFacing facing in BlockFacing.HORIZONTALS)  // Look for vines on all four sides of the block.
+            {
+                BlockPos vinesPosition = treeBlockPos.AddCopy(facing);
+                BlockVines? vinesBlock = blockAccessor.GetBlock(vinesPosition) as BlockVines;
+                if(vinesBlock == null || vinesBlock.LastCodePart() != facing.Code) { continue; }
 
                 BlockPos vinesTop = FindVinesTop(vinesPosition, blockAccessor);
                 if(handledVinesPositions.Contains(vinesTop)) { continue; }
 
                 handledVinesPositions.Add(vinesTop);
-                SpawnVinesDrops(vinesTop, byPlayer);
-			}
-		}
+                SpawnVinesDrops(vinesTop, byPlayer, axeTier);
+            }
+        }
 
         private BlockPos FindVinesTop(BlockPos vinesPosition, IBlockAccessor blockAccessor)
         {
             BlockPos vinesTop = vinesPosition.Copy();
             vinesTop.Up();
-			while(blockAccessor.GetBlock(vinesTop) is BlockVines) {
-				vinesTop.Up();
-			}
-			vinesTop.Down();    // Previous position was top, so go back to that position.
+            while(blockAccessor.GetBlock(vinesTop) is BlockVines) {
+                vinesTop.Up();
+            }
+            vinesTop.Down();    // Previous position was top, so go back to that position.
             return vinesTop;
-		}
+        }
 
-        private void SpawnVinesDrops(BlockPos vinesTop, IServerPlayer byPlayer)
+        private void SpawnVinesDrops(BlockPos vinesTop, IServerPlayer byPlayer, int axeTier)
         {
-			BlockPos vinesPosition = vinesTop.Copy();
-			IWorldAccessor world = byPlayer.Entity.World;
+            BlockPos vinesPosition = vinesTop.Copy();
+            IWorldAccessor world = byPlayer.Entity.World;
             BlockVines? vinesBlock;
-			while((vinesBlock = world.BlockAccessor.GetBlock(vinesPosition) as BlockVines) != null)
+            while((vinesBlock = world.BlockAccessor.GetBlock(vinesPosition) as BlockVines) != null)
             {
-				foreach(ItemStack drop in vinesBlock.GetDrops(world, vinesPosition, byPlayer))
+                foreach(ItemStack drop in vinesBlock.GetDrops(world, vinesPosition, byPlayer))
                 {
-					if(drop == null) { continue; }
-					world.SpawnItemEntity(drop, new Vec3d(vinesPosition.X + 0.5, vinesPosition.Y + 0.5, vinesPosition.Z + 0.5));
-				}
+                    if(drop == null) { continue; }
 
-				vinesPosition.Down();
-			}
-		}
+                    double chance = ModConfig.Loaded.ApplyModifiersToVines ? CalculateDropChance(axeTier) : 1.0;
+                    if(byPlayer.Entity.World.Rand.NextDouble() < chance)
+                    {
+                        world.SpawnItemEntity(drop, new Vec3d(vinesPosition.X + 0.5, vinesPosition.Y + 0.5, vinesPosition.Z + 0.5));
+                    }
+                }
+                vinesPosition.Down();
+            }
+        }
+
+        private double CalculateDropChance(int axeTier)
+        {
+            float modifier = (ModConfig.Loaded.MaxDropRateModifier > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifier;
+            return ModConfig.Loaded.UseToolTier ? (axeTier * modifier / 5.0f) : modifier;
+        }
     }
 }
