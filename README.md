@@ -1,11 +1,11 @@
 # StickEmUp!
 
-A pretty straightforward mod: Trees will drop sticks (and saplings) when chopped!
+A pretty straightforward mod: Trees will drop sticks (and seeds) when chopped!
+New addition: Now includes an option to drop attached vines. Thanks to SIG-ILL for the contribution!
 
 Developed at the request of a Mr. Pakratt0013 for use on his Vintage Story multiplayer streams!
 
-To my dismay, after getting about 90% of the development done on this mod, I learned about the existence of: https://mods.vintagestory.at/onestick, which basically does the same thing, albeit having a different implementation.
-So please check out that mod and see which one you prefer!
+It might be out of date now, but also check out: https://mods.vintagestory.at/onestick which is a similar mod that was developed before this one!
 
 Enjoy!
 
@@ -16,7 +16,21 @@ After seeing OneStick, I did borrow the idea of adding a couple simple configs t
 Right now, this includes:
 #### UseToolTier
 Default Value: True
-When enabled, the chance for drops scales with the tier of your tool (axe). Each tier adds 20% to the drop rate with the final 5th tier providing 100% of the maximum configured drop rate. When disabled, all tiers will provide the maximum configured drop rate.
-#### MaxDropRateModifier
+When enabled, the chance for drops scales with the tier of your tool (axe). Each tier adds 20% to the drop rate with the final 5th tier providing 100% of the maximum configured drop rate (see maximum drop rate modifiers for more info). When disabled, all tiers will provide the maximum configured drop rate.
+#### DropSeeds
+Default Value: True
+When enabled, trees can drop seeds when chopped.
+#### DropVines
+Default Value: True
+When enabled, trees can drop attached vines when chopped.
+### Maximum Drop Rate Modifiers
+These represent the drop rate penalties incurred when chopping a tree with an axe instead of breaking the leaves (or vines) by hand. Think of these as a percentage of the original drop rate. The default values of 0.8 mean that chopping a tree yields the drops at 80% of the original rate, which is a slight nerf to hand-harvesting. If UseToolTier is true, then this is the rate you get at the highest tier tool, with lower tier tools lowering the chance even more, otherwise, this is the rate for every tool.
+#### MaxDropRateModifierSticks
 Default Value: 0.8
-This is not the chance for a leaf to drop a stick or sapling upon chopping a tree. Instead, think of this as an additional tax on the stick/sapling drop rates. At 1.0, or 100%, the leaves should drop sticks/saplings at the same rate as if you broke them by hand. So by default, 0.8 or 80% results in a slight nerf to chopping trees instead of breaking leaves by hand. If UseToolTier is true, then this is the rate you get at the highest tier tool, otherwise, this is the rate for every tool.
+The drop rate penalty for sticks
+#### MaxDropRateModifierSeeds
+Default Value: 0.8
+The drop rate penalty for seeds
+#### MaxDropRateModifierVines
+Default Value: 0.8
+The drop rate penalty for vines
