@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -69,7 +70,15 @@ namespace StickEmUp
                     
                     if (nextDrop == null) { continue; }
 
-                    double chance = CalculateDropChance(axeTier);
+                    double chance = 0;
+                    if (nextDrop.Id == 1841)
+                    {                       
+                        chance = CalculateDropChance(axeTier, 0);
+                    } else if (ModConfig.Loaded.DropSeeds)
+                    {                        
+                        chance = CalculateDropChance(axeTier, 1);
+                    }                         
+
                     if (byPlayer.Entity.World.Rand.NextDouble() < chance)
                     {
                         byPlayer.Entity.World.SpawnItemEntity(nextDrop, new Vec3d((double)pos.X + 0.5, (double)pos.Y + 0.5, (double)pos.Z + 0.5));
@@ -118,7 +127,7 @@ namespace StickEmUp
                 {
                     if(drop == null) { continue; }
 
-                    double chance = ModConfig.Loaded.ApplyModifiersToVines ? CalculateDropChance(axeTier) : 1.0;
+                    double chance = CalculateDropChance(axeTier, 2);
                     if(byPlayer.Entity.World.Rand.NextDouble() < chance)
                     {
                         world.SpawnItemEntity(drop, new Vec3d(vinesPosition.X + 0.5, vinesPosition.Y + 0.5, vinesPosition.Z + 0.5));
@@ -128,9 +137,21 @@ namespace StickEmUp
             }
         }
 
-        private double CalculateDropChance(int axeTier)
+        private double CalculateDropChance(int axeTier, int modifierType)
         {
-            float modifier = (ModConfig.Loaded.MaxDropRateModifier > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifier;
+            float modifier = 0;
+            switch (modifierType)
+            {
+                case 0:
+                    modifier = (ModConfig.Loaded.MaxDropRateModifierSticks > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifierSticks;
+                    break;
+                case 1:
+                    modifier = (ModConfig.Loaded.MaxDropRateModifierSeeds > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifierSeeds;
+                    break;
+                case 2:
+                    modifier = (ModConfig.Loaded.MaxDropRateModifierVines > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifierVines;
+                    break;
+            }
             return ModConfig.Loaded.UseToolTier ? (axeTier * modifier / 5.0f) : modifier;
         }
     }
