@@ -11,17 +11,14 @@ namespace StickEmUp
         private float _MaxDropRateModifierSticks = 0.8f;
         public float MaxDropRateModifierSticks { get { return _MaxDropRateModifierSticks; } set { _MaxDropRateModifierSticks = value >= 0 ? value : 0; } }
 
-        private bool _DropSeeds = true;
-        public bool DropSeeds { get { return _DropSeeds; } set { _DropSeeds = value; } }
-
         private float _MaxDropRateModifierSeeds = 0.8f;
         public float MaxDropRateModifierSeeds { get { return _MaxDropRateModifierSeeds; } set { _MaxDropRateModifierSeeds = value >= 0 ? value : 0; } }
 
         private float _MaxDropRateModifierVines = 0.8f;
         public float MaxDropRateModifierVines { get { return _MaxDropRateModifierVines; } set { _MaxDropRateModifierVines = value >= 0 ? value : 0; } }
 
-        private bool _DropVines = true;
-        public bool DropVines { get { return _DropVines; } set { _DropVines = value; } }
+        private float _MaxDropRateModifierMisc = 0;
+        public float MaxDropRateModifierMisc { get { return _MaxDropRateModifierMisc; } set { _MaxDropRateModifierMisc = value >= 0 ? value : 0; } }
 
     }
 }

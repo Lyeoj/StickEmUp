@@ -57,7 +57,7 @@ namespace StickEmUp
                 BlockPos pos = treePositions.Pop();
                 Block block = byPlayer.Entity.World.BlockAccessor.GetBlock(pos);
 
-                if(ModConfig.Loaded.DropVines && (block.BlockMaterial == EnumBlockMaterial.Wood || block.BlockMaterial == EnumBlockMaterial.Leaves))
+                if(ModConfig.Loaded.MaxDropRateModifierVines > 0 && (block.BlockMaterial == EnumBlockMaterial.Wood || block.BlockMaterial == EnumBlockMaterial.Leaves))
                 {
                     DropAttachedVines(pos, byPlayer, axeTier, handledVinesPositions);
                 }
@@ -70,14 +70,17 @@ namespace StickEmUp
                     
                     if (nextDrop == null) { continue; }
 
-                    double chance = 0;
-                    if (nextDrop.Id == 1841)
-                    {                       
+                    double chance;
+                    if (nextDrop.Item != null && nextDrop.Item.Code.ToString() == "game:stick")
+                    {
                         chance = CalculateDropChance(axeTier, 0);
-                    } else if (ModConfig.Loaded.DropSeeds)
-                    {                        
+                    } else if (nextDrop.Item != null && nextDrop.Item.Code.ToString().StartsWith("game:treeseed"))
+                    {
                         chance = CalculateDropChance(axeTier, 1);
-                    }                         
+                    } else
+                    {
+                        chance = CalculateDropChance(axeTier, 3);
+                    }
 
                     if (byPlayer.Entity.World.Rand.NextDouble() < chance)
                     {
@@ -150,6 +153,9 @@ namespace StickEmUp
                     break;
                 case 2:
                     modifier = (ModConfig.Loaded.MaxDropRateModifierVines > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifierVines;
+                    break;
+                case 3:
+                    modifier = (ModConfig.Loaded.MaxDropRateModifierMisc > 1.0f) ? 1.0f : ModConfig.Loaded.MaxDropRateModifierMisc;
                     break;
             }
             return ModConfig.Loaded.UseToolTier ? (axeTier * modifier / 5.0f) : modifier;
